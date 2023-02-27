@@ -3,6 +3,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from db import items
+from schemas import ItemSchema, ItemUpdateSchema
 
 
 blp = Blueprint("Items", "items", description="Operations on items")
@@ -23,13 +24,8 @@ class Item(MethodView):
         except KeyError:
             abort(404, message="Item not found.")
 
-    def put(self, item_id):
-        item_data = request.get_json()
-        # there's more validation to do here!
-        # like making sure the price is a number, and also both items are optional
-        # Difficult to do with an if statement 
-        if "price" not in item_data or "name" not in item_data:
-            abort(400, message="Bad request. Ensure 'price', or 'name' are included in the JSON payload.")
+    @blp.arguments(ItemUpdateSchema)
+    def put(self, item_data, item_id):
         try:
             item = items[item_id]
             item |= item_data
@@ -44,20 +40,8 @@ class ItemList(MethodView):
     def get(self):
         return {"items": list(items.values())}
     
-    def post(self):
-        item_data = request.get_json()
-        # here not only we need to validate dat exists,
-        # but also what type of data. Prices should be a float.
-
-        if (
-            "price" not in item_data or
-            "store_id" not in item_data or 
-            "name" not in item_data
-        ):
-            abort(
-                400,
-                message="Bad request. Ensure 'price', 'store_id', and 'name' are included"
-            )
+    @blp.arguments(ItemSchema)
+    def post(self, item_data):
         for item in items.values():
             if (
                 item_data["name"] == item["name"] and
