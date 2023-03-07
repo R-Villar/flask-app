@@ -1,7 +1,9 @@
 import os
+import secrets
 
 from flask import Flask
 from flask_smorest import Api
+from flask_jwt_extended import JWTManager
 
 from db import db
 import models
@@ -27,6 +29,9 @@ def create_app(db_url=None):
     db.init_app(app)
 
     api = Api(app)
+    
+    # app.config["JWT_SECRET_KEY"] = secrets.SystemRandom().getrandbits(128)
+    jwt = JWTManager(app)
 
 
     @app.before_first_request
