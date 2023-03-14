@@ -51,7 +51,7 @@ class TokenRefresh(MethodView):
         new_token = create_access_token(identity=current_user, fresh=False)
         return {"access_token": new_token}
     
-    
+
 @blp.route("/logout")
 class UserLogout(MethodView):
     @jwt_required()

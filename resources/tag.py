@@ -31,7 +31,7 @@ class TagsInStore(MethodView):
 
 
 
-@blp.route("/item/<int:items_id>/tag/<int:tag_id>")
+@blp.route("/item/<int:item_id>/tag/<int:tag_id>")
 class LinkTagsToItem(MethodView):
     @blp.response(201, TagSchema)
     def post(self, item_id, tag_id):
