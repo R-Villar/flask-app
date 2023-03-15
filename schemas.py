@@ -8,9 +8,11 @@ class PlainItemSchema(Schema):
     description = fields.Str(required=False)
 
 
-class PlainStoreSchema(Schema):
+class UserSchema(Schema):
     id = fields.Int(dump_only=True)
-    name = fields.Str(required=True)
+    username = fields.Str(required=True)
+    password = fields.Str(required=True, load_only=True)
+    # items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)
 
 
 class PlainTagSchema(Schema):
@@ -21,24 +23,24 @@ class PlainTagSchema(Schema):
 class ItemUpdateSchema(Schema):
     name = fields.Str()
     price = fields.Float()
-    store_id = fields.Int()
+    user_id = fields.Int()
     description = fields.Str()
 
 
 class ItemSchema(PlainItemSchema):
-    store_id = fields.Int(required=True, load_only=True)
-    store = fields.Nested(PlainStoreSchema(), dump_only=True)
+    user_id = fields.Int(required=True, load_only=True)
+    user = fields.Nested(UserSchema(), dump_only=True)
     tags = fields.List(fields.Nested(PlainTagSchema()), dump_only=True)
 
 
-class StoreSchema(PlainStoreSchema):
-    items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)
-    tags = fields.List(fields.Nested(PlainTagSchema()), dump_only=True)
+# class UserSchema(PlainItemSchema):
+#     items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)
+    # tags = fields.List(fields.Nested(PlainTagSchema()), dump_only=True)
 
 
 class TagSchema(PlainTagSchema):
-    store_id = fields.Int(load_only=True)
-    store = fields.Nested(PlainStoreSchema(), dump_only=True)
+    item_id = fields.Int(load_only=True)
+    user = fields.Nested(UserSchema(), dump_only=True)
     items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)
 
 
@@ -48,7 +50,5 @@ class TagAndItemSchema(Schema):
     tag = fields.Nested(TagSchema)
 
 
-class UserSchema(Schema):
-    id = fields.Int(dump_only=True)
-    username = fields.Str(required=True)
-    password = fields.Str(required=True, load_only=True)
+class UserRegisterSchema(Schema):
+    email = fields.Str(required=True)
