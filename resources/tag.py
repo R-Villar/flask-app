@@ -3,23 +3,23 @@ from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
 
 from db import db
-from models import TagModel, StoreModel, ItemModel
+from models import TagModel, ItemModel
 from schemas import TagSchema, TagAndItemSchema
 
 blp = Blueprint("Tags", "tags", description="Operations on tags")
 
-@blp.route("/store/<int:store_id>/tag")
-class TagsInStore(MethodView):
+@blp.route("/item/<int:item_id>/tag")
+class TagsInItem(MethodView):
     @blp.response(200, TagSchema(many=True))
-    def get(self, store_id):
-        store = StoreModel.query.get_or_404(store_id)
+    def get(self, item_id):
+        item = ItemModel.query.get_or_404(item_id)
 
-        return store.tags.all()
+        return item.tags.all()
 
     @blp.arguments(TagSchema)
     @blp.response(201, TagSchema)
-    def post(self, tag_data, store_id):
-        tag = TagModel(**tag_data, store_id=store_id)
+    def post(self, tag_data, item_id):
+        tag = TagModel(**tag_data, item_id=item_id)
 
         try:
             db.session.add(tag)
